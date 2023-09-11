@@ -71,6 +71,7 @@ More examples see in [/docs/examples](/docs/examples).
     ansible_become_pass      : "{{ lookup('viczem.keepass.keepass', 'path/to/entry', 'password') }}"
     custom_field             : "{{ lookup('viczem.keepass.keepass', 'path/to/entry', 'custom_properties', 'a_custom_property_name') }}"
     attachment               : "{{ lookup('viczem.keepass.keepass', 'path/to/entry', 'attachments', 'a_file_name') }}"
+    content                  : "{{ lookup('viczem.keepass.keepass', 'path/to/entry', 'content', 'a_file_name') }}"
 
 #### Module
     - name: "Export file: attachment.txt"

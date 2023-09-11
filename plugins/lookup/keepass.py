@@ -35,12 +35,15 @@ DOCUMENTATION = """
         required: True
     notes:
       - https://github.com/viczem/ansible-keepass
+      - Using the lookup the 'attachments' will return a temporal path to a copy of the attached file
+        while 'content' will return the bytes of file
 
     examples:
       - "{{ lookup('keepass', 'path/to/entry', 'username') }}"
       - "{{ lookup('keepass', 'path/to/entry', 'password') }}"
       - "{{ lookup('keepass', 'path/to/entry', 'custom_properties', 'my_prop_name') }}"
       - "{{ lookup('keepass', 'path/to/entry', 'attachments', 'my_file_name') }}"
+      - "{{ lookup('keepass', 'path/to/entry', 'content', 'my_file_name') }}"
 """
 
 display = Display()
@@ -326,7 +329,7 @@ def _keepass_socket(kdbx, kdbx_key, sock_path, ttl=60, kdbx_password=None):
                                 )
                             )
                             break
-                        if prop == "attachments":
+                        if prop in ("attachments", 'content'):
                             if arg_len == 2:
                                 conn.send(
                                     _resp(
@@ -352,6 +355,10 @@ def _keepass_socket(kdbx, kdbx_key, sock_path, ttl=60, kdbx_password=None):
                                         "for '%s'" % (prop_key, path),
                                     )
                                 )
+                                break
+
+                            if prop == 'content':
+                                conn.send(_resp("fetch", 0, attachment.data.decode()))
                                 break
 
                             tmp_file = tempfile.mkstemp(f".{attachment.filename}")[1]
